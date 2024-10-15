@@ -21,18 +21,20 @@ const getTabs = async () => {
 }; 
 chrome.tabs.onRemoved.addListener(() =>{
     getTabs();
-    getLastAccessedTime();
 });
 
 chrome.tabs.onCreated.addListener(() => {
     getTabs();
-    getLastAccessedTime();
 });
 
-
-// chrome.tabs.query({}, (tabs) =>{
-//     console.log(tabs);
-// })
+const getTabId = async () => {
+    const tabs = await chrome.tabs.query({});
+    tabs.forEach(tab => {
+        if (tab.Id) {
+            const tabId = tab.Id;
+        };
+    });
+};
 
 //TODO use the chrome api to find the tabs information
 
@@ -48,14 +50,15 @@ const getLastAccessedTime = async () => {
                 const date = new Date(lastAccessedTime);
                 const idleTime = date.toTimeString();
 
-                console.log('Tab ID: ${tab.id} - Time since last used: ${idleTime}')
+                console.log('Tab ID: ', tabId, "This hasn't been used since",idleTime);
             } else {
                 console.log('I have no clue whats going on')
             };
         });
 };
 
-chrome.tabs.o
+getLastAccessedTime();
+getTabId();
 
 //TODO Put the tabs information into the object{}
 
