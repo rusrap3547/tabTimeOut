@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "chrome-types": "^0.1.309",
+    "eslint": "^9.12.0"
+  }
+}
