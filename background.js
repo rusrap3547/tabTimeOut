@@ -39,9 +39,6 @@ const getTabId = async () => {
 //TODO use the chrome api to find the tabs information
 
 // This can be done - after using the tabs.query with an event listener we are able to see all the information on the tab.
-
-//next we need to figure out how to call the lastAccessed as date.toTimeString
-
 const getLastAccessedTime = async () => {
     const tabs = await chrome.tabs.query({});
         tabs.forEach(tab => {
