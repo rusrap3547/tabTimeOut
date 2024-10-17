@@ -63,7 +63,12 @@ const getLastAccessedTime = async () => {
 // This runs the function every 2 seconds
 // setInterval(getLastAccessedTime, 2000);
 
-
+//set up for autoDiscardable to true for later button use
+const autoDeleteTab = (tabId) => {
+  chrome.tabs.update(tabId, { autoDiscardable: true }, () => {
+    console.log(`Tab ID: ${tabId} can now be removed.`);
+  });
+};
 
 //TODO find out how to trigger them when older than a time
 //TODO set up a listener to monitor the timers
@@ -71,31 +76,40 @@ const getLastAccessedTime = async () => {
 //next we need to figure out how to call the lastAccessed as date.toTimeString
 
 const getTimeChange = async () => {
+  try {
   const tabs = await chrome.tabs.query({});
-  tabs.forEach(tab =>{
-    tabId = tab.id;
+  tabs.forEach(tab => {
+    const tabId = tab.id;
     if (tab.lastAccessed) {
       const lastAccessedTime = new Date(tab.lastAccessed);
       const currentTime = new Date();
       const elapsedTime = currentTime - lastAccessedTime;
-      const trueElapsedTime = Math.floor(elapsedTime / 1000/ 60);
-      // console.log("Tab ID:", tabId);
-      // console.log('Last used:', lastAccessedTime.toTimeString);
-      // console.log('Current Time:', currentTime.toTimeString);
-      // console.log('Time Difference:', trueElapsedTime);
-      return trueElapsedTime;
+      const trueElapsedTime = Math.floor(elapsedTime / (1000 * 60));
+      console.log(lastAccessedTime, currentTime, elapsedTime, trueElapsedTime);
+
+      if (trueElapsedTime > .5) {
+        autoDeleteTab(tabId);
+        console.log(`${tabId} was scheduled for deletion.`)
+      };
+
+      // return trueElapsedTime;
     };
   });
+  } catch (error) {
+    console.log(`The following error was received: ${error.message}.`);
+    }
 };
 
-getTimeChange();
+//reset the idle timer when tab gets active and remove the autodelete tag
+chrome.tabs.onActivated.addListener(async (activeInfo) => {
+  const tabId = activeInfo.tabId; 
+  chrome.tabs.update(tabId, { autoDiscardable: false }, () => {
+    console.log(`Tab ${tabId} set to non-discardable.`);
+  });
+});
 
 setInterval(getTimeChange, 6000); 
-  if (trueElapsedTime > 1) { 
-    chrome.tabs.update(tabId, { highlighted: true }, () =>{
-      console.log(tab.id, 'is now highlighed!');
-    });
-  };
+ 
 
 //TODO figure out the code to close down tabs
 

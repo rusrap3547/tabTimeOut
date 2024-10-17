@@ -28,6 +28,22 @@ chrome.tabs.onCreated.addListener(() => {
     getTabs();
 });
 
+document.getElementById('startButton').addEventListener('click', async () => {
+    try {
+      const tabs = await chrome.tabs.query({});
+      const autoDiscardableTabs = tabs.filter(tab => tab.autoDiscardable);
+      const tabIdsToClose = autoDiscardableTabs.map(tab => tab.id);
+      if (tabIdsToClose.length > 0) {
+        chrome.tabs.remove(tabIdsToClose, () => {
+          console.log('Auto-discardable tabs closed.');
+        });
+      } else {
+        console.log('No auto-discardable tabs found.');
+      }
+    } catch (error) {
+      console.error('Failed to take out the trash:', error);
+    }
+  });
 
 // chrome.tabs.query({}, (tabs) =>{
 //     console.log(tabs);
