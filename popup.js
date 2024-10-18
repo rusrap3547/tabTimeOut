@@ -27,10 +27,10 @@ getTabs();
 chrome.tabs.onCreated.addListener(() => {
     getTabs();
 });
-
-document.getElementById('startButton').addEventListener('click', async () => {
-    try {
-      const tabs = await chrome.tabs.query({});
+// did you change this to mouse to test something different? Yes, I thought the docs sayd 'mouse' was equal to 'click'
+document.getElementById('startButton').addEventListener('click',  async () => {
+  try {
+      const tabs =  await chrome.tabs.query({});
       const autoDiscardableTabs = tabs.filter(tab => tab.autoDiscardable);
       const tabIdsToClose = autoDiscardableTabs.map(tab => tab.id);
       if (tabIdsToClose.length > 0) {
